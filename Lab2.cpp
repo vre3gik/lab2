@@ -2007,3 +2007,109 @@ int main() {
     cout << countNumbers(arr, size) << endl;
     return 0;
 }
+
+
+
+
+
+
+
+//1 
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+#define MAX_SIZE 1000
+
+
+bool palindrome(int num) {
+    int izn = num;
+    int reverse = 0;
+    while (num > 0) {
+        reverse = reverse * 10 + num % 10;
+        num /= 10;
+    }
+    return izn == reverse;
+}
+
+void input_nums(int arr[], int n) {
+    cout << "Введите " << n << " элементов массива (целые числа от 1 до 999999):" << endl;
+    for (int i = 0; i < n; i++) {
+        while (!(cin >> arr[i]) || arr[i] <= 0 || arr[i] >= 1000000) {
+            cout << "Ошибка! Введите целое число от 1 до 999999: ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+    }
+}
+
+void randomInput(int arr[], int n) {
+    srand(time(0));
+    for (int i = 0; i < n; i++) {
+        arr[i] = rand() % 999998 + 1; 
+    }
+    cout << "Массив заполнен " << n << " рандомными числами!" << endl;
+}
+
+int palindromelist(int Z[], int B[], int M) {
+    int count = 0;
+    for (int i = 0; i < M; i++) {
+        if (palindrome(Z[i])) {
+            B[count] = Z[i];
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int Z[MAX_SIZE], B[MAX_SIZE];
+    int M = 0;
+    cout << "Введите количество чисел списка (1-" << MAX_SIZE-1 << "): ";
+    while (!(cin >> M) || M <= 0 || M >= MAX_SIZE) {
+        cout << "Ошибка! Введите число от 1 до " << MAX_SIZE-1 << ": ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+    int choice;
+    cout << "\nВыберите способ ввода:" << endl;
+    cout << "1. Пользователем" << endl;
+    cout << "2. Случайные числа" << endl;
+    cout << "Ваш выбор: ";
+    while (!(cin >> choice) || (choice != 1 && choice != 2)) {
+        cout << "Ошибка! Выберите 1 или 2: ";
+        cin.clear();
+        cin.ignore(10000, '\n');
+    }
+    if (choice == 1) {
+        input_nums(Z, M);
+    } else {
+        randomInput(Z, M);
+    }
+    int count = palindromelist(Z, B, M);
+    if (M == 0) {
+        cout << "Массив Z пустой." << endl;
+    } else {
+        cout << "Массив Z " << endl;
+        for (int i = 0; i < M; i++) {
+            cout << Z[i] << " ";
+            if ((i + 1) % 10 == 0) {
+                cout << endl;
+            }
+        }
+        cout << endl;
+    }
+    if (count > 0) {
+        cout << "Массив B :" << endl;
+        for (int i = 0; i < count; i++) {
+            cout << B[i] << " ";
+            if ((i + 1) % 10 == 0) {
+                cout << endl;
+            }
+        }
+        cout << endl;
+    } else {
+        cout << "В массиве нет палиндромов." << endl;
+    }
+    return 0;
+}
