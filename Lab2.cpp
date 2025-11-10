@@ -2113,3 +2113,359 @@ int main() {
     }
     return 0;
 }
+
+
+
+//2 
+#include <iostream>
+using namespace std;
+
+int len_stroki(const char str[]) {
+    int len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+    return len;
+}
+
+bool short_stroka(int len, int min_len) {
+    return len <= min_len;
+}
+
+void pustaya(char str[]) {
+    str[0] = '\0';
+}
+
+int main() {
+    const int max_len = 100;
+    char stroka[max_len];
+    int length;
+    int min_len;
+    cout << "Введите строку: ";
+    cin.getline(stroka, max_len);
+    cout << "Введите длину меньше которой строка является короткой: ";
+    cin >> min_len;
+    length = len_stroki(stroka);
+    cout << "Длина введенной строки: " << length << endl;
+    if (short_stroka(length, min_len)) {
+        pustaya(stroka);
+        cout << "Строка является короткой и заменена на пустую" << endl;
+    } else {
+        cout << "Строка не является короткой" << endl;
+    }
+    cout << "Строка после выполнения программы: " << stroka << endl;
+    return 0;
+}
+
+
+
+//3 
+#include <iostream>
+#include <cstring>
+#include <cmath>
+using namespace std;
+
+const int MAX_BIN_NUM = 100;
+const int MAX_LEN_STR = 1000;
+int count_bin_num(const char* stroka) {
+    int count = 0;
+    char arr_copy_stroka[MAX_LEN_STR];
+    strcpy(arr_copy_stroka, stroka);
+    char* word = strtok(arr_copy_stroka, " ");
+    while (word != nullptr) {
+        if (strlen(word) > 1 && word[0] == '2') {
+            bool bin = true;
+            for (size_t i = 1; i < strlen(word); i++) {
+                if (word[i] != '0' && word[i] != '1') {
+                    bin = false;
+                    break;
+                }
+            }
+            if (bin) {
+                count++;
+            }
+        }
+        word = strtok(nullptr, " ");
+    }
+    return count;
+}
+
+void sozdanie_arr_s_bin_num(const char* stroka, char bin_nums[][MAX_LEN_STR]) {
+    char temp[MAX_LEN_STR];
+    strcpy(temp, stroka);
+    int count = 0;
+    char* word = strtok(temp, " ");
+    while (word != nullptr) {
+        if (strlen(word) > 1 && word[0] == '2') {
+            bool is_binary = true;
+            for (size_t i = 1; i < strlen(word); i++) {
+                if (word[i] != '0' && word[i] != '1') {
+                    is_binary = false;
+                    break;
+                }
+            }
+            if (is_binary) {
+                strcpy(bin_nums[count], word);
+                count++;
+            }
+        }
+        word = strtok(nullptr, " ");
+    }
+}
+
+int bin_to_int(const char* bin_str) {
+    int int_num = 0;
+    int length = strlen(bin_str);
+    int stepen = 0;
+    for (int i = length - 1; i >= 0; i--) {
+        if (bin_str[i] == '1') {
+            int_num += pow(2, stepen);
+        }
+        stepen++;
+    }
+    return int_num;
+}
+
+char* remove_bin_num(const char* stroka, char bin_nums[][MAX_LEN_STR], int count) {
+    char* result_str = new char[MAX_LEN_STR];
+    strcpy(result_str, stroka);
+    for (int i = 0; i < count; i++) {
+        char* pos = strstr(result_str, bin_nums[i]);
+        while (pos != nullptr) {
+            int binary_len = strlen(bin_nums[i]);
+            memmove(pos, pos + binary_len, strlen(pos + binary_len) + 1);
+            if (pos[0] == ' ' && (pos == result_str || pos[-1] == ' ')) {
+                memmove(pos, pos + 1, strlen(pos + 1) + 1);
+            }
+            pos = strstr(result_str, bin_nums[i]);
+        }
+    }
+    char* double_space = strstr(result_str, "  ");
+    while (double_space != nullptr) {
+        memmove(double_space, double_space + 1, strlen(double_space + 1) + 1);
+        double_space = strstr(result_str, "  ");
+    }
+    if (result_str[0] == ' ') {
+        memmove(result_str, result_str + 1, strlen(result_str + 1) + 1);
+    }
+    int res_len = strlen(result_str);
+    if (res_len > 0 && result_str[res_len - 1] == ' ') {
+        result_str[res_len - 1] = '\0';
+    }
+    return result_str;
+}
+
+int main() {
+    char stroka[MAX_LEN_STR];
+    cout << "Введите предложение: ";
+    cin.getline(stroka, MAX_LEN_STR);
+    int count = count_bin_num(stroka);
+    cout << "Найдено двоичных чисел: " << count << endl;
+    if (count > 0) {
+        char bin_nums[MAX_BIN_NUM][MAX_LEN_STR];
+        int int_bin_arr[MAX_BIN_NUM];
+        sozdanie_arr_s_bin_num(stroka, bin_nums);
+        cout << "Двоичные числа и они в десятичном виде:" << endl;
+        for (int i = 0; i < count; i++) {
+            int_bin_arr[i] = bin_to_int(bin_nums[i]);
+            cout << bin_nums[i] << " - " << int_bin_arr[i] << endl;
+        }
+        char* res_str = remove_bin_num(stroka, bin_nums, count);
+        cout << "\nВами введеное предложение: " << stroka << endl;
+        cout << "Предложение без двоичных чисел: " << res_str << endl;
+        delete[] res_str;
+    } else {
+        cout << "Двоичные числа не найдены в предложении." << endl;
+    }
+    return 0;
+}
+
+
+
+//4 
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
+#include <limits>
+using namespace std;
+
+bool soversh(int n) {
+    if (n <= 1) {
+        return false;
+    }
+    int sum = 1;
+    for (int i = 2; i <= n/2; i++) {
+        if (n % i == 0) {
+            sum += i;
+        }
+    }
+    return sum == n;
+}
+
+void maxnumindex(int* arr, int n) {
+    if (n == 0) {
+        cout << "Список пустой" << endl;
+        return;
+    }
+    int maxn = arr[0];
+    int index = 0;
+    for (int i = 1; i < n; i++) {
+        if (arr[i] >= maxn) {
+            maxn = arr[i];
+            index = i;
+        }
+    }
+    cout << "Последнее максимальное число: " << maxn << endl;
+    cout << "Индекс этого числа: " << index << endl;
+}
+
+void sorted_pryam(int* arr, int n) {
+    for (int i = 0; i < n - 1; i++) {
+        int indexmin = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[indexmin]) {
+                indexmin = j;
+            }
+        }
+        if (indexmin != i) {
+            swap(arr[i], arr[indexmin]);
+        }
+    }
+}
+
+int czhatiearr(int* arr, int n) {
+    int count = 0;
+    bool flag = false;
+    for (int i = 0; i < n; i++) {
+        if (!((arr[i] >= 1 && arr[i] <= 10) || (arr[i] >= 20 && arr[i] <= 30))) {
+            arr[count] = arr[i];
+            count++;
+        } else {
+            flag = true;
+        }
+    }
+    if (!flag) {
+        cout << "Числа принадлежащие отрезкам [1,10] и [20,30] не найдены" << endl;
+    }
+    return count;
+}
+
+void newarrsoversh(int* arr_a, int n, int*& arr_b, int& size_b) {
+    size_b = 0;
+    for (int i = 0; i < n; i++) {
+        if (soversh(arr_a[i])) {
+            size_b++;
+        }
+    }
+    if (size_b == 0) {
+        cout << "Совершенных чисел нет" << endl;
+        arr_b = nullptr;
+        return;
+    }
+    arr_b = new int[size_b];
+    int index = 0;
+    for (int i = 0; i < n; i++) {
+        if (soversh(arr_a[i])) {
+            arr_b[index] = arr_a[i];
+            index++;
+        }
+    }
+}
+
+void randomarr(int* arr, int n) {
+    srand(time(0));
+    int minn, maxn;
+    cout << "Введите минимальное значение: ";
+    while (!(cin >> minn)) {
+        cout << "Ошибка! Введите целое число: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    cout << "Введите максимальное значение: ";
+    while (!(cin >> maxn) || maxn < minn) {
+        if (maxn < minn) {
+            cout << "Максимальное значение должно быть больше минимального. Введите снова: ";
+        } else {
+            cout << "Ошибка! Введите целое число: ";
+        }
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    for (int i = 0; i < n; i++) {
+        arr[i] = minn + rand() % (maxn - minn + 1);
+    }
+}
+
+int inputintnum(const string& text) {
+    int value;
+    cout << text;
+    while (!(cin >> value)) {
+        cout << "Ошибка! Введите целое число: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    return value;
+}
+
+int main() {
+    int* arra = nullptr;
+    int* arrb = nullptr;
+    int sizea = 0;
+    int sizeb = 0;
+    int choice;
+    sizea = inputintnum("Введите размер массива: ");
+    arra = new int[sizea];
+    cout << "Выберите способ ввода 1 - свои числа, 2 - рандомные числа: ";
+    while (!(cin >> choice) || (choice != 1 && choice != 2)) {
+        cout << "Ошибка! Введите 1 или 2: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    if (choice == 1) {
+        cout << "Введите " << sizea << " элементов массива:" << endl;
+        for (int i = 0; i < sizea; i++) {
+            arra[i] = inputintnum("Элемент " + to_string(i + 1) + ": ");
+        }
+    } else {
+        randomarr(arra, sizea);
+    }
+    cout << "\nМассив A:" << endl;
+    for (int i = 0; i < sizea; i++) {
+        cout << arra[i] << " ";
+    }
+    cout << endl;
+    cout << "\n1. Последнее максимальное значение:" << endl;
+    maxnumindex(arra, sizea);
+    cout << "\n2. Сортировка массива методом прямого выбора:" << endl;
+    sorted_pryam(arra, sizea);
+    cout << "Отсортированный массив A:" << endl;
+    for (int i = 0; i < sizea; i++) {
+        cout << arra[i] << " ";
+    }
+    cout << endl;
+    cout << "\n3. Сжатие массива:" << endl;
+    int newSize = czhatiearr(arra, sizea);
+    if (newSize > 0) {
+        sizea = newSize;
+        cout << "Сжатый массив A:" << endl;
+        for (int i = 0; i < sizea; i++) {
+            cout << arra[i] << " ";
+        }
+        cout << endl;
+    }
+    cout << "\n4. Создание массива совершенных чисел:" << endl;
+    newarrsoversh(arra, sizea, arrb, sizeb);
+    if (sizeb > 0) {
+        cout << "Массив B с совершенными числами:" << endl;
+        for (int i = 0; i < sizeb; i++) {
+            cout << arrb[i] << " ";
+        }
+        cout << endl;
+    }
+    delete[] arra;
+    if (arrb != nullptr) {
+        delete[] arrb;
+    }
+    return 0;
+}
